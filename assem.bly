@@ -1,0 +1,132 @@
+﻿;SDFT
+;init code
+LDI #255	  ;Load N-1
+MOV R6, R1
+
+;SAMPLE LOOP
+LDA R2, [R0] ; Load newest value
+LDA R3, [R6] ; Load oldest value
+
+SBI R2, R3 ; delta = new - old
+I2F R7, R2 ; cast delta to float
+
+MOV R9, R0 ; InitiaR1ze loop counter to zero
+;Inner loop
+LOOP:
+	LDB R4, [R9] ;Load F[R9] and F[R9+1] into R4, and R5
+	LDC [R9]	  ;Load C[R9] and C[R9+1] into C, and D
+	
+	ADF R4, R7 ;xr += delta
+	
+MAC R4, R5 ;R4 += R5*C
+MAD R5, R4 ;R5 += R4*D
+MAC R4, R5 ;R4 += R5*C
+;NOPS
+STB [R9], R4 ;Store R0, R1 to F[i] and F[i+1]
+
+CMP R9, R6 ;Compare R9 to N-1
+BLT =7
+
+HALT ;Sleep
+
+
+
+;iSDFT
+;init code
+LDI #255	  ;Load N-1
+MOV R6, R1
+LDI #6144 ;1/N  1/256 = 0.00110.0000000000 = #6144; 1/512 = 0.00111.0000000000 = #6400
+MOV R7, R1
+
+;SAMPLE LOOP
+MOV R4, R0
+MOV R5, R0
+
+MOV R9, R0 ; InitiaR1ze loop counter to zer0
+LOOP:
+	LDA R2, [R9] ;Load F[R9] and F[R9+1] into R2, and R3
+	LDC [R9]	  ;Load C[R9] and C[R9+1] into C, and D
+		
+MSC R2, R3 ;R2 -= R3*C
+MSD R3, R2 ;R3 -= R2*D
+MSC R2, R3 ;R2 -= R3*C
+
+ADF R4, R2 ;R4 += R2
+
+CMP R9, R6 ;Compare R9 to N-1
+BLT =7
+MLF R4, R7 ;R4 *= 1/N
+F2I R4, R4 ;cast to int
+STB [R0], R4 ;store to mem
+
+HALT ;Sleep
+
+;Bitcrusher
+LDA R2, [R0] ;Load sample
+LDI #192
+CMP R2, R1 ; check if R2 is larger than R1
+BLT =37
+LDI #128
+CMP R2, R1 ; check if R2 is larger than R1
+BLT =37
+LDI #96
+CMP R2, R1 ; check if R2 is larger than R1
+BLT =37
+LDI #64
+CMP R2, R1 ; check if R2 is larger than R1
+BLT =37
+LDI #48
+CMP R2, R1 ; check if R2 is larger than R1
+BLT =37
+LDI #32
+CMP R2, R1 ; check if R2 is larger than R1
+BLT =37
+LDI #24
+CMP R2, R1 ; check if R2 is larger than R1
+BLT =37
+LDI #16
+CMP R2, R1 ; check if R2 is larger than R1
+BLT =37
+LDI #12
+CMP R2, R1 ; check if R2 is larger than R1
+BLT =37
+LDI #8
+CMP R2, R1 ; check if R2 is larger than R1
+BLT =37
+LDI #6
+CMP R2, R1 ; check if R2 is larger than R1
+BLT =37
+LDI #4
+CMP R2, R1 ; check if R2 is larger than R1
+BLT =37
+MOV R1, R2 ; else, use original value
+STB R1, R0 ; store new value
+HALT
+
+
+;Delay
+LDA R2, [R0];LOAD sample to R2 from A mem
+LDI #255	;LOAD 255
+MOV R7, R1	;MOVE 255 to R7
+
+LDI #COEFF	;LOAD COEFF  fraction dry
+MOV R4, R1	;MOVE COEFF to R4
+
+
+LDI #DELAYTIME	;LOAD DELAYTIME
+MOV R8, R1	;MOVE DELAYTIME to R8
+LDA R3, [R8];LOAD sample to R3 from A mem
+
+MR1 R2, R4	;R2 *= R4
+
+LDI #1		;LOAD 1
+MOV R5, R1	;MOVE 1 to R5
+SBI R5, R4	;R5 -= R4    fraction wet
+
+MR1 R3, R5	;R3 *= R4
+ADI R2, R3	;R2 += R3
+
+CMP R7, R2	;Check R2 larger than 255
+BLT =17
+MOV R2, R7	;R2 = 255
+STB R2, [R0];STORE R2
