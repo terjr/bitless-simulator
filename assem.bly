@@ -18,13 +18,13 @@ LOOP:
 	
 	ADF R4, R7 ;xr += delta
 	
-MAC R4, R5 ;R4 += R5*C
-MAD R5, R4 ;R5 += R4*D
-MAC R4, R5 ;R4 += R5*C
-;NOPS
-STB [R9], R4 ;Store R0, R1 to F[i] and F[i+1]
-
-CMP R9, R6 ;Compare R9 to N-1
+	MAC R4, R5 ;R4 += R5*C
+	MAD R5, R4 ;R5 += R4*D
+	MAC R4, R5 ;R4 += R5*C
+	;NOPS
+	STB [R9], R4 ;Store R0, R1 to F[i] and F[i+1]
+	
+	CMP R9, R6 ;Compare R9 to N-1
 BLT =7
 
 HALT ;Sleep
@@ -47,13 +47,13 @@ LOOP:
 	LDA R2, [R9] ;Load F[R9] and F[R9+1] into R2, and R3
 	LDC [R9]	  ;Load C[R9] and C[R9+1] into C, and D
 		
-MSC R2, R3 ;R2 -= R3*C
-MSD R3, R2 ;R3 -= R2*D
-MSC R2, R3 ;R2 -= R3*C
+	MSC R2, R3 ;R2 -= R3*C
+	MSD R3, R2 ;R3 -= R2*D
+	MSC R2, R3 ;R2 -= R3*C
 
-ADF R4, R2 ;R4 += R2
+	ADF R4, R2 ;R4 += R2
 
-CMP R9, R6 ;Compare R9 to N-1
+	CMP R9, R6 ;Compare R9 to N-1
 BLT =7
 MLF R4, R7 ;R4 *= 1/N
 F2I R4, R4 ;cast to int
