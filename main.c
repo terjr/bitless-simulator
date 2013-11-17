@@ -17,7 +17,7 @@ int32_t main() {
     printf("Read %d samples\n", read);
 
     //echo(samples, read, 4000, 0.5);
-    bitcrusher(samples, read);
+    distortion(samples, read, 120);
 
     out.samplerate = in.samplerate;
     uint32_t written = writeWav("output.wav", &out, samples, in.samplerate * SECONDS);

@@ -18,5 +18,10 @@ void bitcrusher(uint16_t *samples, uint32_t nSamples) {
         else if (samples[i] > 32) samples[i] = 48;
         else if (samples[i] > 16) samples[i] = 24;
     }
+}
 
+void distortion(uint16_t *samples, uint32_t nSamples, uint32_t cutoff) {
+    for (uint32_t i = 0; i < nSamples; ++i) {
+        if (samples[i] > cutoff) samples[i] = cutoff;
+    }
 }
