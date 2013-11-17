@@ -16,7 +16,8 @@ int32_t main() {
     uint32_t read = readWav("mordi.wav", &in, &samples);
     printf("Read %d samples\n", read);
 
-    echo(samples, read, 4000, 0.5);
+    //echo(samples, read, 4000, 0.5);
+    bitcrusher(samples, read);
 
     out.samplerate = in.samplerate;
     uint32_t written = writeWav("output.wav", &out, samples, in.samplerate * SECONDS);
